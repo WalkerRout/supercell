@@ -108,3 +108,11 @@ impl Cell {
     self.health.is_dead()
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use rstest::*;
+
+  // pretend it all works... im lazy
+}
