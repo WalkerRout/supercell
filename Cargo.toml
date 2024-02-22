@@ -6,12 +6,11 @@ members = [
 
 # size optimization build
 [profile.release]
-opt-level = 3 # optimize for size
+opt-level = 3
 lto = true # enable lto
 codegen-units = 1 # increase optimizations
 panic = "abort" # disable stack unwind
 strip = "symbols" # strip bin
-#debug = true # enable for flamegraph
 
 [lints.rust]
 unsafe_code = "forbid"
