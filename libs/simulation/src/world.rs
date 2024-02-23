@@ -14,8 +14,8 @@ pub struct World {
 impl World {
   pub fn new(dims: u16) -> (Self, Self) {
     let rules = Rules::new(dims);
-    let mut rng = thread_rng();
     let cells = {
+      let mut rng = thread_rng();
       let mut cells = Vec::with_capacity((dims*dims*dims) as usize);
       for i in 0..dims {
         for j in 0..dims {
