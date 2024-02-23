@@ -35,12 +35,15 @@ impl World {
 
   pub fn update(&mut self, previous: &mut Self) {
     *previous = self.clone();
-    // for every cell in cells;
-    // - determine the number of living neighbours
-    // - determine future health based on neighbours
+
     let threads = 8;
+    let mut chunk_size = self.cells.len() / threads;
+    if chunk_size == 0 {
+      chunk_size = 4;
+    }
+    
     self.cells
-      .par_chunks_mut(threads)
+      .par_chunks_mut(chunk_size)
       .for_each(|chunk| {
         chunk
           .iter_mut()

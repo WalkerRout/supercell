@@ -9,7 +9,7 @@ const WIDTH: i32 = 800;
 const HEIGHT: i32 = 800;
 const Y_OFFSET: f32 = 3.0;
 const UPDATE_TICKS: usize = 5;
-const DIMENSIONS: u16 = 40;
+const DIMENSIONS: u16 = 46;
 const ALIVE_COLOR: Color = Color::DARKGRAY;
 const DECAYING_COLOR: Color = Color::new(0x8c, 0x40, 0x40, 0xFF);
 
@@ -74,8 +74,8 @@ impl World {
 
 fn init_world(rl: &mut RaylibHandle, dimension: u16) -> (World, Camera3D) {
   let camera = Camera3D::perspective(
-    Vector3::new(2.0 * dimension as f32, dimension as f32, 2.0 * dimension as f32),
-    Vector3::new(0.0, 0.0, 0.0),
+    Vector3::new(1.7 * dimension as f32, dimension as f32, 1.7 * dimension as f32),
+    Vector3::new(0.0, dimension as f32 / 4.0, 0.0),
     Vector3::new(0.0, 1.0, 0.0),
     70.0,
   );
