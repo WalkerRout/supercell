@@ -5,8 +5,8 @@ use lib_simulation as sm;
 
 use std::thread;
 
-const WIDTH: i32 = 980;
-const HEIGHT: i32 = 640;
+const WIDTH: i32 = 800;
+const HEIGHT: i32 = 800;
 const Y_OFFSET: f32 = 3.0;
 const UPDATE_TICKS: usize = 5;
 const DIMENSIONS: u16 = 34;

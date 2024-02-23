@@ -28,6 +28,7 @@ impl Health {
     }
   }
 
+  #[allow(unused)]
   fn health(&self) -> u8 {
     self.health_ticks - self.decay_ticks
   }
