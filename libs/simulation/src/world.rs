@@ -59,16 +59,21 @@ mod tests {
   use super::*;
   use rstest::*;
 
-  #[rstest]
-  fn new() {
-    let (previous, world) = World::new(3);
-    assert_eq!(previous, world);
-  }
+  mod world {
+    use super::*;
 
-  #[rstest]
-  fn update() {
-    let (mut previous, mut world) = World::new(2);
-    world.update(&mut previous);
-    assert_ne!(world.cells, previous.cells);
+    #[rstest]
+    fn new() {
+      let (previous, world) = World::new(3);
+      assert_eq!(previous, world);
+    }
+
+    #[rstest]
+    fn update() {
+      let (mut previous, mut world) = World::new(2);
+      dbg!(&world);
+      world.update(&mut previous);
+      assert_ne!(world.cells, previous.cells);
+    }
   }
 }

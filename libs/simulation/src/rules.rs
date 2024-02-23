@@ -45,29 +45,36 @@ mod tests {
   use super::*;
   use rstest::*;
 
-  #[rstest]
-  fn default() {
-    let rules = Rules::default();
-    assert_eq!(rules.dims, 6);
-    assert_eq!(&rules.neighbours, &[3, 5]);
-    assert_eq!(&rules.offsets, &[
-      (1, 0, 0),
-      (-1, 0, 0),
-      (0, 1, 0),
-      (0, -1, 0),
-      (0, 0, 1),
-      (0, 0, -1),
-    ]);
-  }
+  mod rules {
+    use super::*;
+    
+    #[rstest]
+    fn default() {
+      let rules = Rules::default();
+      assert_eq!(rules.dims, 6);
+      assert_eq!(&rules.neighbours, &[3, 5]);
+      assert_eq!(&rules.offsets, &[
+        (1, 0, 0),
+        (-1, 0, 0),
+        (0, 1, 0),
+        (0, -1, 0),
+        (0, 0, 1),
+        (0, 0, -1),
+      ]);
+    }
 
-  #[rstest]
-  #[case(1)]
-  #[case(2)]
-  #[case(3)]
-  #[should_panic]
-  #[case::panic(0)]
-  fn new(#[case] dims: u16) {
-    let rules = Rules::new(dims);
-    assert_eq!(rules.dims, dims);
+    #[rstest]
+    #[case(1)]
+    #[case(2)]
+    #[case(3)]
+    #[case(10)]
+    #[case(20)]
+    #[case(50)]
+    #[should_panic]
+    #[case::panic(0)]
+    fn new(#[case] dims: u16) {
+      let rules = Rules::new(dims);
+      assert_eq!(rules.dims, dims);
+    }
   }
 }
