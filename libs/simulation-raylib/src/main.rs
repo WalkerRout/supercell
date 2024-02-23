@@ -9,7 +9,7 @@ const WIDTH: i32 = 800;
 const HEIGHT: i32 = 800;
 const Y_OFFSET: f32 = 3.0;
 const UPDATE_TICKS: usize = 5;
-const DIMENSIONS: u16 = 34;
+const DIMENSIONS: u16 = 40;
 const ALIVE_COLOR: Color = Color::DARKGRAY;
 const DECAYING_COLOR: Color = Color::new(0x8c, 0x40, 0x40, 0xFF);
 
@@ -58,6 +58,7 @@ impl World {
       if cell.is_decaying() {
         d2.draw_cube(pos, size, size, size, DECAYING_COLOR);
       }
+      // kind of unstable
       if self.draw_wireframe {
         d2.draw_cube_wires(pos, size, size, size, Color::MAROON);
       }

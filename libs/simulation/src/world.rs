@@ -16,7 +16,7 @@ impl World {
     let rules = Rules::new(dims);
     let mut rng = thread_rng();
     let cells = {
-      let mut cells = Vec::new();
+      let mut cells = Vec::with_capacity((dims*dims*dims) as usize);
       for i in 0..dims {
         for j in 0..dims {
           for k in 0..dims {

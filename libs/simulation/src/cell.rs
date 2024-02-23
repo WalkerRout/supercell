@@ -20,9 +20,8 @@ impl Health {
 
   fn update(&mut self, rules: &Rules, neighbours: u8) {
     if rules.neighbours.contains(&neighbours) {
-      if self.is_dead() || self.health_ticks < 255 {
-        self.health_ticks += 1;
-      }
+      // branchless increment
+      self.health_ticks += (self.is_dead() || self.health_ticks < 255) as u8;
     } else if self.health_ticks >= 1 {
       self.health_ticks -= 1;
     }
@@ -80,9 +79,8 @@ impl Cell {
         let k = (self.index.2 as i32 - offset.2 as i32) as u16;
         let d = rules.dims;
         let pos = (i*d*d + j*d + k) as usize;
-        if cells[pos].is_alive() {
-          self.neighbours += 1;
-        }
+        // branchless increment
+        self.neighbours += (cells[pos].is_alive()) as u8;
       }
     }
   }
