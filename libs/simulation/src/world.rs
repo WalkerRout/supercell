@@ -71,7 +71,6 @@ mod tests {
     #[rstest]
     fn update() {
       let (mut previous, mut world) = World::new(2);
-      dbg!(&world);
       world.update(&mut previous);
       assert_ne!(world.cells, previous.cells);
     }
