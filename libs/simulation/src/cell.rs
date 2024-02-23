@@ -1,8 +1,8 @@
 
 use crate::*;
 
-pub const HEALTH: u8 = 13;
-pub const MIN_HEALTH: u8 = 5;
+pub const HEALTH: u8 = 20;
+pub const MIN_HEALTH: u8 = 8;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Health {
@@ -13,13 +13,8 @@ pub struct Health {
 impl Health {
   fn new(base: u8, decay_ticks: u8) -> Self {
     assert!(decay_ticks > 0);
-    let health_ticks = if base.checked_add(decay_ticks).is_none() {
-      u8::MAX
-    } else {
-      base + decay_ticks
-    };
     Self {
-      health_ticks,
+      health_ticks: base.checked_add(decay_ticks).unwrap_or(u8::MAX),
       decay_ticks,
     }
   }
@@ -192,8 +187,8 @@ mod tests {
     }
 
     #[rstest]
-    #[case(4, 5, HEALTH+5 + 1)]
-    #[case(5, 5, HEALTH+5 - 1)]
+    #[case(4, MIN_HEALTH, HEALTH+MIN_HEALTH + 1)]
+    #[case(5, MIN_HEALTH, HEALTH+MIN_HEALTH - 1)]
     fn update_health(#[case] neighbours: u8, #[case] decay_ticks: u8, #[case] expected_health_ticks: u8) {
       let mut rules = Rules::default();
       rules.neighbours = vec![4];
