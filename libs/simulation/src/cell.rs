@@ -28,7 +28,6 @@ impl Health {
     }
   }
 
-  #[allow(unused)]
   fn health(&self) -> u8 {
     self.health_ticks - self.decay_ticks
   }
@@ -37,7 +36,6 @@ impl Health {
     self.health_ticks > self.decay_ticks
   }
 
-  #[allow(unused)]
   fn is_decaying(&self) -> bool {
     self.health_ticks > 0 && self.health_ticks <= self.decay_ticks
   }
