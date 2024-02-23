@@ -86,6 +86,14 @@ fn init_world(rl: &mut RaylibHandle, dimension: u16) -> (World, Camera3D) {
 }
 
 fn input_world(world: &mut World, rl: &mut RaylibHandle, _camera: &Camera3D) {
+  let dimension = world.sm_world.rules.dims;
+  // reset
+  if rl.is_key_pressed(KeyboardKey::KEY_R) {
+    let prev_update_ticks = world.update_ticks;
+    *world = World::new(sm::World::new(dimension));
+    world.update_ticks = prev_update_ticks;
+  }
+
   // wireframe modifier
   if rl.is_key_pressed(KeyboardKey::KEY_D) {
     world.draw_wireframe = !world.draw_wireframe;
