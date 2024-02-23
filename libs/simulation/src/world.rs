@@ -28,7 +28,7 @@ impl World {
       }
       cells
     };
-    let previous = Self { cells, rules, };
+    let previous = Self { rules, cells, };
     let world = previous.clone();
     (previous, world)
   }
