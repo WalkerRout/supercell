@@ -1,7 +1,4 @@
 
-#[allow(unused_imports)]
-use crate::*;
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct Rules {
   pub dims: u16,
