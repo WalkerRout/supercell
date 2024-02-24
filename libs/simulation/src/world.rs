@@ -6,12 +6,13 @@ use rand::prelude::*;
 use rayon::prelude::*;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct World {
+pub struct World<C> {
   pub rules: Rules,
-  pub cells: Vec<Cell>,
+  pub cells: Vec<C>,
 }
 
-impl World {
+impl<C> World<C>
+  where C: Cell + Clone {
   pub fn new(dims: u16) -> (Self, Self) {
     let rules = Rules::new(dims);
     let cells = {
@@ -21,7 +22,7 @@ impl World {
         for j in 0..dims {
           for k in 0..dims {
             let mut cell = Cell::new((i, j, k));
-            cell.health.health_ticks = rng.gen_range(0..HEALTH);
+            cell.randomize_health() = rng.gen_range(0..HEALTH);
             cells.push(cell);
           }
         }

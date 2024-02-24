@@ -1,6 +1,15 @@
 
 use crate::*;
 
+use rand::prelude::*;
+
+trait Cell {
+  fn from_position((i, j, k): (u16, u16, u16)) -> Self;
+  fn randomize_health(&mut self, rng: &mut impl RngCore);
+  fn is_alive(&self) -> bool;
+  fn update(&mut self, rules: &Rules, cells: &[impl Cell]);
+}
+
 pub const HEALTH: u8 = 20;
 pub const MIN_HEALTH: u8 = 8;
 
@@ -42,13 +51,13 @@ impl Health {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Cell {
+pub struct CubeCell {
   pub neighbours: u8,
   pub health: Health,
   pub index: (u16, u16, u16),
 }
 
-impl Cell {
+impl CubeCell {
   pub fn new(index: (u16, u16, u16)) -> Self {
     Self {
       neighbours: 0,
@@ -57,7 +66,7 @@ impl Cell {
     }
   }
 
-  pub fn update_neighbours(&mut self, rules: &Rules, cells: &[Cell]) {
+  pub fn update_neighbours(&mut self, rules: &Rules, cells: &[impl Cell]) {
     let check_pos = |pos: (u16, u16, u16), off: &(i8, i8, i8)| -> bool {
       let i = pos.0 as i32 - off.0 as i32;
       let j = pos.1 as i32 - off.1 as i32;
@@ -100,6 +109,19 @@ impl Cell {
   pub fn is_dead(&self) -> bool {
     self.health.is_dead()
   }
+}
+
+impl Cell for CubeCell {
+  fn from_position((i, j, k): (u16, u16, u16)) -> Self {
+    CubeCell::new((i, j, k))
+  }
+
+  fn randomize_health(&mut self, rng: &mut impl RngCore) {
+    self.health.health_ticks = rng.gen_range(0..HEALTH);
+  }
+
+  fn is_alive(&self) -> bool;
+  fn update(&mut self, rules: &Rules, cells: &[impl Cell]);
 }
 
 #[cfg(test)]
@@ -163,12 +185,12 @@ mod tests {
     }
   }
 
-  mod cell {
+  mod cube_cell {
     use super::*;
 
     #[rstest]
     fn new() {
-      let cell = Cell::new((1, 2, 3));
+      let cell = CubeCell::new((1, 2, 3));
       assert_eq!(cell.neighbours, 0);
       assert_eq!(cell.health, Health::new(HEALTH, MIN_HEALTH));
       assert_eq!(cell.index, (1, 2, 3));
@@ -178,10 +200,10 @@ mod tests {
     fn update_neighbours() {
       let rules = Rules::new(2);
       let cells = vec![
-        Cell::new((0, 0, 0)), Cell::new((0, 0, 1)),  Cell::new((0, 1, 0)), Cell::new((0, 1, 1)),
-        Cell::new((1, 0, 0)), Cell::new((1, 0, 1)),  Cell::new((1, 1, 0)), Cell::new((1, 1, 1)),
+        CubeCell::new((0, 0, 0)), CubeCell::new((0, 0, 1)),  CubeCell::new((0, 1, 0)), CubeCell::new((0, 1, 1)),
+        CubeCell::new((1, 0, 0)), CubeCell::new((1, 0, 1)),  CubeCell::new((1, 1, 0)), CubeCell::new((1, 1, 1)),
       ];
-      let mut cell = Cell::new((0, 0, 0));
+      let mut cell = CubeCell::new((0, 0, 0));
       cell.update_neighbours(&rules, &cells);
       assert_eq!(cell.neighbours, 3);
     }
@@ -192,7 +214,7 @@ mod tests {
     fn update_health(#[case] neighbours: u8, #[case] decay_ticks: u8, #[case] expected_health_ticks: u8) {
       let mut rules = Rules::default();
       rules.neighbours = vec![4];
-      let mut cell = Cell::new((1, 2, 3));
+      let mut cell = CubeCell::new((1, 2, 3));
       cell.neighbours = neighbours;
       cell.update_health(&rules);
       assert_eq!(cell.health, Health { health_ticks: expected_health_ticks, decay_ticks, });
@@ -200,7 +222,7 @@ mod tests {
 
     #[rstest]
     fn clear_neighbours() {
-      let mut cell = Cell::new((1, 2, 3));
+      let mut cell = CubeCell::new((1, 2, 3));
       cell.neighbours = 10;
       assert_eq!(cell.neighbours, 10);
       cell.clear_neighbours();
