@@ -12,8 +12,9 @@ pub struct World<C> {
 }
 
 impl<C> World<C>
-  where C: Cell + Clone {
-  pub fn new(dims: u16) -> (Self, Self) {
+  where C: Cell {
+  pub fn new(dims: u16) -> (Self, Self) 
+    where C: Clone {
     let rules = Rules::new(dims);
     let cells = {
       let mut rng = thread_rng();
@@ -35,7 +36,7 @@ impl<C> World<C>
   }
 
   pub fn update(&mut self, previous: &mut Self) 
-    where C: Send + Sync {
+    where C: Clone + Send + Sync {
     *previous = self.clone();
 
     let threads = 8;
