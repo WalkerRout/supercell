@@ -3,15 +3,22 @@ use crate::*;
 
 use rand::prelude::*;
 
-trait Cell {
-  fn from_position((i, j, k): (u16, u16, u16)) -> Self;
-  fn randomize_health(&mut self, rng: &mut impl RngCore);
-  fn is_alive(&self) -> bool;
-  fn update(&mut self, rules: &Rules, cells: &[impl Cell]);
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum CellStatus {
+  Alive,
+  Decaying,
+  Dead,
 }
 
-pub const HEALTH: u8 = 20;
-pub const MIN_HEALTH: u8 = 8;
+pub trait Cell {
+  fn from_position(position: (u16, u16, u16)) -> Self;
+  fn randomize_health(&mut self, rng: &mut impl RngCore);
+  fn update(&mut self, rules: &Rules, cells: &[impl Cell]);
+  fn status(&self) -> CellStatus;
+}
+
+const HEALTH: u8 = 20;
+const MIN_HEALTH: u8 = 8;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Health {
@@ -85,7 +92,7 @@ impl CubeCell {
         let d = rules.dims;
         let pos = (i*d*d + j*d + k) as usize;
         // branchless increment
-        self.neighbours += (cells[pos].is_alive()) as u8;
+        self.neighbours += (cells[pos].status() == CellStatus::Alive) as u8;
       }
     }
   }
@@ -97,31 +104,32 @@ impl CubeCell {
   pub fn clear_neighbours(&mut self) {
     self.neighbours = 0;
   }
-
-  pub fn is_alive(&self) -> bool {
-    self.health.is_alive()
-  }
-
-  pub fn is_decaying(&self) -> bool {
-    self.health.is_decaying()
-  }
-
-  pub fn is_dead(&self) -> bool {
-    self.health.is_dead()
-  }
 }
 
 impl Cell for CubeCell {
-  fn from_position((i, j, k): (u16, u16, u16)) -> Self {
-    CubeCell::new((i, j, k))
+  fn from_position(position: (u16, u16, u16)) -> Self {
+    CubeCell::new(position)
   }
 
   fn randomize_health(&mut self, rng: &mut impl RngCore) {
     self.health.health_ticks = rng.gen_range(0..HEALTH);
   }
 
-  fn is_alive(&self) -> bool;
-  fn update(&mut self, rules: &Rules, cells: &[impl Cell]);
+  fn status(&self) -> CellStatus {
+    if self.health.is_alive() {
+      CellStatus::Alive
+    } else if self.health.is_decaying() {
+      CellStatus::Decaying
+    } else {
+      CellStatus::Dead
+    }
+  }
+
+  fn update(&mut self, rules: &Rules, cells: &[impl Cell]) {
+    self.clear_neighbours();
+    self.update_neighbours(rules, cells);
+    self.update_health(rules);
+  }
 }
 
 #[cfg(test)]

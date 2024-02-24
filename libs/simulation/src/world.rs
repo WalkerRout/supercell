@@ -21,8 +21,8 @@ impl<C> World<C>
       for i in 0..dims {
         for j in 0..dims {
           for k in 0..dims {
-            let mut cell = Cell::new((i, j, k));
-            cell.randomize_health() = rng.gen_range(0..HEALTH);
+            let mut cell = C::from_position((i, j, k));
+            cell.randomize_health(&mut rng);
             cells.push(cell);
           }
         }
@@ -34,7 +34,8 @@ impl<C> World<C>
     (previous, world)
   }
 
-  pub fn update(&mut self, previous: &mut Self) {
+  pub fn update(&mut self, previous: &mut Self) 
+    where C: Send + Sync {
     *previous = self.clone();
 
     let threads = 8;
@@ -49,10 +50,7 @@ impl<C> World<C>
         chunk
           .iter_mut()
           .for_each(|cell| {
-            cell.clear_neighbours();
-            cell.update_neighbours(&self.rules, &previous.cells);
-            // update health status based on previous neighbours
-            cell.update_health(&self.rules);
+            cell.update(&self.rules, &previous.cells);
           });
       });
   }

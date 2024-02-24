@@ -2,6 +2,7 @@
 use raylib::prelude::*;
 
 use lib_simulation as sm;
+use sm::Cell;
 
 use std::thread;
 
@@ -15,15 +16,15 @@ const DECAYING_COLOR: Color = Color::new(0x8c, 0x40, 0x40, 0xFF);
 
 #[derive(Debug, Clone, PartialEq)]
 struct World {
-  sm_world: sm::World,
-  sm_previous: sm::World,
+  sm_world: sm::World<sm::CubeCell>,
+  sm_previous: sm::World<sm::CubeCell>,
   ticks: usize,
   update_ticks: usize,
   draw_wireframe: bool,
 }
 
 impl World {
-  fn new((sm_previous, sm_world): (sm::World, sm::World)) -> Self {
+  fn new((sm_previous, sm_world): (sm::World<sm::CubeCell>, sm::World<sm::CubeCell>)) -> Self {
     Self {
       sm_world,
       sm_previous,
@@ -52,11 +53,10 @@ impl World {
     for cell in &self.sm_world.cells {
       let pos = index_to_vector3(cell.index);
       let size = 1.0;
-      if cell.is_alive() {
-        d2.draw_cube(pos, size, size, size, ALIVE_COLOR);
-      }
-      if cell.is_decaying() {
-        d2.draw_cube(pos, size, size, size, DECAYING_COLOR);
+      match cell.status() {
+        sm::CellStatus::Alive => d2.draw_cube(pos, size, size, size, ALIVE_COLOR),
+        sm::CellStatus::Decaying => d2.draw_cube(pos, size, size, size, DECAYING_COLOR),
+        _ => (),
       }
       // kind of unstable
       if self.draw_wireframe {
