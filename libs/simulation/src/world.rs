@@ -22,7 +22,7 @@ impl<C> World<C>
       for i in 0..dims {
         for j in 0..dims {
           for k in 0..dims {
-            let mut cell = C::from_position((i, j, k));
+            let mut cell = C::from_index((i, j, k));
             cell.randomize_health(&mut rng);
             cells.push(cell);
           }

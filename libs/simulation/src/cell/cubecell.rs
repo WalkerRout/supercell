@@ -47,11 +47,11 @@ impl Health {
 pub struct CubeCell {
   pub neighbours: u8,
   pub health: Health,
-  pub index: (u16, u16, u16),
+  pub index: Index,
 }
 
 impl CubeCell {
-  pub fn new(index: (u16, u16, u16)) -> Self {
+  pub fn new(index: Index) -> Self {
     Self {
       neighbours: 0,
       health: Health::new(HEALTH, MIN_HEALTH),
@@ -93,8 +93,8 @@ impl CubeCell {
 }
 
 impl Cell for CubeCell {
-  fn from_position(position: (u16, u16, u16)) -> Self {
-    CubeCell::new(position)
+  fn from_index(index: Index) -> Self {
+    CubeCell::new(index)
   }
 
   fn randomize_health(&mut self, rng: &mut impl RngCore) {
@@ -186,7 +186,7 @@ mod tests {
     #[rstest]
     fn new_and_from_position() {
       // identical behaviour expected
-      let cells = [CubeCell::new((1, 2, 3)), CubeCell::from_position((1, 2, 3))];
+      let cells = [CubeCell::new((1, 2, 3)), CubeCell::from_index((1, 2, 3))];
       for cell in cells {
         assert_eq!(cell.neighbours, 0);
         assert_eq!(cell.health, Health::new(HEALTH, MIN_HEALTH));
