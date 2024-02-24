@@ -1,7 +1,7 @@
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Rules {
-  pub dims: u16,
+  pub dims: u16, // cube dimensions
   pub neighbours: Vec<u8>, // list of valid neighbours
   pub offsets: Vec<(i8, i8, i8)>, // list of offsets to get nearby neighbours
 }
