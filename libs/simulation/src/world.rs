@@ -66,13 +66,13 @@ mod tests {
 
     #[rstest]
     fn new() {
-      let (previous, world) = World::new(3);
+      let (previous, world) = World::<CubeCell>::new(3);
       assert_eq!(previous, world);
     }
 
     #[rstest]
     fn update() {
-      let (mut previous, mut world) = World::new(2);
+      let (mut previous, mut world) = World::<CubeCell>::new(2);
       world.update(&mut previous);
       assert_ne!(world.cells, previous.cells);
     }

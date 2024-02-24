@@ -195,13 +195,17 @@ mod tests {
 
   mod cube_cell {
     use super::*;
+    use rand::thread_rng;
 
     #[rstest]
-    fn new() {
-      let cell = CubeCell::new((1, 2, 3));
-      assert_eq!(cell.neighbours, 0);
-      assert_eq!(cell.health, Health::new(HEALTH, MIN_HEALTH));
-      assert_eq!(cell.index, (1, 2, 3));
+    fn new_and_from_position() {
+      // identical behaviour expected
+      let cells = [CubeCell::new((1, 2, 3)), CubeCell::from_position((1, 2, 3))];
+      for cell in cells {
+        assert_eq!(cell.neighbours, 0);
+        assert_eq!(cell.health, Health::new(HEALTH, MIN_HEALTH));
+        assert_eq!(cell.index, (1, 2, 3));
+      }
     }
 
     #[rstest]
@@ -235,6 +239,30 @@ mod tests {
       assert_eq!(cell.neighbours, 10);
       cell.clear_neighbours();
       assert_eq!(cell.neighbours, 0);
+    }
+
+    #[rstest]
+    fn randomize_health() {
+      let mut cell = CubeCell::new((1, 2, 3));
+      let mut rng = thread_rng();
+      cell.randomize_health(&mut rng);
+      // cell.health.health_ticks should be within [0, HEALTH]
+      // assert!(0 <= cell.health.health_ticks); - not needed, unsigned
+      assert!(cell.health.health_ticks <= HEALTH);
+    }
+
+    #[rstest]
+    fn status() {
+      let mut cell = CubeCell::new((1, 2, 3));
+      let actual_expected = [
+        (HEALTH, CellStatus::Alive),
+        (MIN_HEALTH, CellStatus::Decaying),
+        (0, CellStatus::Dead),
+      ];
+      for (actual, expected) in actual_expected {
+        cell.health.health_ticks = actual;
+        assert_eq!(cell.status(), expected);
+      }
     }
   }
 }
