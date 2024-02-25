@@ -77,8 +77,11 @@ impl CubeCell {
         let k = (self.index.2 as i32 - offset.2 as i32) as u16;
         let d = rules.dims;
         let pos = (i*d*d + j*d + k) as usize;
-        // branchless increment
-        self.neighbours += (cells[pos].status() == CellStatus::Alive) as u8;
+
+        if let Some(cell) = cells.get(pos) {
+          // branchless increment
+          self.neighbours += (cell.status() == CellStatus::Alive) as u8;
+        }
       }
     }
   }
@@ -184,7 +187,7 @@ mod tests {
     use rand::thread_rng;
 
     #[rstest]
-    fn new_and_from_position() {
+    fn new_and_from_index() {
       // identical behaviour expected
       let cells = [CubeCell::new((1, 2, 3)), CubeCell::from_index((1, 2, 3))];
       for cell in cells {

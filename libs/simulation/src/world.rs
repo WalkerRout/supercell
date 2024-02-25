@@ -39,9 +39,9 @@ impl<C> World<C>
     where C: Clone + Send + Sync {
     *previous = self.clone();
 
-    let threads = 8;
-    let mut chunk_size = self.cells.len() / threads;
-    if chunk_size == 0 {
+    let chunk_count = 16;
+    let mut chunk_size = self.cells.len() / chunk_count;
+    if chunk_size <= 1 {
       chunk_size = 4;
     }
     

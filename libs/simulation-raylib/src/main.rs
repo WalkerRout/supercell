@@ -10,7 +10,7 @@ const WIDTH: i32 = 800;
 const HEIGHT: i32 = 800;
 const Y_OFFSET: f32 = 3.0;
 const UPDATE_TICKS: usize = 5;
-const DIMENSIONS: u16 = 46;
+const DIMENSIONS: u16 = 42;
 const ALIVE_COLOR: Color = Color::DARKGRAY;
 const DECAYING_COLOR: Color = Color::new(0x8c, 0x40, 0x40, 0xFF);
 
