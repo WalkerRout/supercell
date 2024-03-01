@@ -1,4 +1,5 @@
 
+use rand::Rng;
 use raylib::prelude::*;
 
 use lib_simulation as sm;
@@ -6,13 +7,12 @@ use sm::Cell;
 
 use std::thread;
 
-const WIDTH: i32 = 800;
+const WIDTH: i32 = 1200;
 const HEIGHT: i32 = 800;
 const Y_OFFSET: f32 = 3.0;
-const UPDATE_TICKS: usize = 5;
-const DIMENSIONS: u16 = 42;
-const ALIVE_COLOR: Color = Color::DARKGRAY;
-const DECAYING_COLOR: Color = Color::new(0x8c, 0x40, 0x40, 0xFF);
+const UPDATE_TICKS: usize = 9;
+const DIMENSIONS: u16 = 40;
+const ALIVE_COLOR: Color = Color::new(0x7b, 0xa0, 0x56, 0xFF);
 
 #[derive(Debug, Clone, PartialEq)]
 struct World {
@@ -49,19 +49,40 @@ impl World {
       Vector3::new(i, j, k)
     };
 
+    let mut rng = rand::thread_rng();
     let mut d2 = d.begin_mode3D(camera);
     for cell in &self.sm_world.cells {
       let pos = index_to_vector3(cell.index);
       let size = 1.0;
-      match cell.status() {
-        sm::CellStatus::Alive => d2.draw_cube(pos, size, size, size, ALIVE_COLOR),
-        sm::CellStatus::Decaying => d2.draw_cube(pos, size, size, size, DECAYING_COLOR),
+      let (st, hp) = cell.status();
+      match st {
+        sm::CellStatus::Alive => {
+          let alive_color = {
+            let Color { r, g, b, ..} = ALIVE_COLOR;
+            let r = rng.gen_range(r-4..=r+4);
+            let g = rng.gen_range(g-4..=g+4);
+            let b = rng.gen_range(b-4..=b+4);
+            Color::new(r, g, b, 0xFF)
+          };
+          d2.draw_cube(pos, size, size, size, alive_color);
+        },
+        sm::CellStatus::Decaying => {
+          let decaying_color = {
+            let intensity = (1.0 + hp.curr_health as f32) / (hp.max_health as f32 + 2.0);
+            let brightness = (intensity * 255.0) as u8;
+            Color::new(brightness, brightness, brightness, 0xFF)
+          };
+          d2.draw_cube(pos, size, size, size, decaying_color);
+        },
         _ => (),
       }
-      // kind of unstable
-      if self.draw_wireframe {
-        d2.draw_cube_wires(pos, size, size, size, Color::MAROON);
-      }
+    }
+
+    // kind of unstable
+    if self.draw_wireframe {
+      let fdim = dimension as f32;
+      let pos = Vector3::new(0.0, Y_OFFSET + fdim / 2.0, 0.0);
+      d2.draw_cube_wires(pos, fdim, fdim, fdim, Color::MAROON);
     }
 
     d2.draw_plane(
@@ -104,8 +125,12 @@ fn input_world(world: &mut World, rl: &mut RaylibHandle, _camera: &Camera3D) {
   if rl.is_key_pressed(KeyboardKey::KEY_UP) && world.update_ticks <= 55 {
     world.update_ticks += 5;
   }
-  if rl.is_key_pressed(KeyboardKey::KEY_DOWN) && world.update_ticks - 5 >= 1 {
-    world.update_ticks -= 5;
+  if rl.is_key_pressed(KeyboardKey::KEY_DOWN) {
+    if world.update_ticks.checked_sub(5).is_some() {
+      world.update_ticks -= 5;
+    } else {
+      world.update_ticks = 1;
+    }
     assert!(world.update_ticks >= 1); // use % update_ticks; cannot div by 0
   }
 }

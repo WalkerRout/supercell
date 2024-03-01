@@ -37,7 +37,7 @@ impl<C> World<C>
 
   pub fn update(&mut self, previous: &mut Self) 
     where C: Clone + Send + Sync {
-    *previous = self.clone();
+    previous.cells = self.cells.clone();
 
     let chunk_count = 16;
     let mut chunk_size = self.cells.len() / chunk_count;

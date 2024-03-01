@@ -3,8 +3,8 @@ use crate::*;
 
 use rand::{Rng, RngCore};
 
-const HEALTH: u8 = 20;
-const MIN_HEALTH: u8 = 8;
+const HEALTH: u8 = 90;
+const MIN_HEALTH: u8 = 40;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Health {
@@ -80,7 +80,7 @@ impl CubeCell {
 
         if let Some(cell) = cells.get(pos) {
           // branchless increment
-          self.neighbours += (cell.status() == CellStatus::Alive) as u8;
+          self.neighbours += (cell.status().0 == CellStatus::Alive) as u8;
         }
       }
     }
@@ -104,13 +104,19 @@ impl Cell for CubeCell {
     self.health.health_ticks = rng.gen_range(0..HEALTH);
   }
 
-  fn status(&self) -> CellStatus {
+  fn status(&self) -> (CellStatus, HealthStatus) {
+    let status = HealthStatus {
+      max_health: HEALTH,
+      curr_health: self.health.health_ticks,
+      min_health: MIN_HEALTH,
+    };
+
     if self.health.is_alive() {
-      CellStatus::Alive
+      (CellStatus::Alive, status)
     } else if self.health.is_decaying() {
-      CellStatus::Decaying
+      (CellStatus::Decaying, status)
     } else {
-      CellStatus::Dead
+      (CellStatus::Dead, status)
     }
   }
 
