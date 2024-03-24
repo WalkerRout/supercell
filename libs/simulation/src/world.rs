@@ -45,6 +45,10 @@ impl<C> World<C>
       chunk_size = 4;
     }
     
+    // TODO: remove index from CubeCell, pass in index of cell to update
+    //let i = AtomicUsize::new(0);
+    //let j = AtomicUsize::new(0);
+    //let k = AtomicUsize::new(0);
     self.cells
       .par_chunks_mut(chunk_size)
       .for_each(|chunk| {

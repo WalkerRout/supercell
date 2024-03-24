@@ -11,3 +11,8 @@ rand = "0.8.5"
 
 [dev-dependencies]
 rstest = "0.18.2"
+criterion = { version = "0.3", features = ["html_reports"] }
+
+[[bench]]
+name = "bench_world"
+harness = false # disable rustc harness for criterion

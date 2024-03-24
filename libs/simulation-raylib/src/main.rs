@@ -155,7 +155,8 @@ fn render_world(world: &mut World, rl: &mut RaylibHandle, thread: &RaylibThread,
           updated_world
         });
         world.draw(&mut d, camera);
-        *world = handle.join().expect("updated_world.update() should not panic");
+        // thread shouldnt panic
+        *world = handle.join().unwrap();
       } else {
         world.draw(&mut d, camera);
       }

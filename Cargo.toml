@@ -12,6 +12,10 @@ codegen-units = 1 # increase optimizations
 panic = "abort" # disable stack unwind
 strip = "symbols" # strip bin
 
+[profile.bench]
+opt-level = 3
+debug = true
+
 [lints.rust]
 unsafe_code = "forbid"
 

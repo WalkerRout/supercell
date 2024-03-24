@@ -256,7 +256,7 @@ mod tests {
       ];
       for (actual, expected) in actual_expected {
         cell.health.health_ticks = actual;
-        assert_eq!(cell.status(), expected);
+        assert_eq!(cell.status().0, expected);
       }
     }
   }
