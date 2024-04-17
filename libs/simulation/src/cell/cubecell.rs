@@ -16,7 +16,7 @@ impl Health {
   fn new(base: u8, decay_ticks: u8) -> Self {
     assert!(decay_ticks > 0);
     Self {
-      health_ticks: base.checked_add(decay_ticks).unwrap_or(u8::MAX),
+      health_ticks: base.saturating_add(decay_ticks),
       decay_ticks,
     }
   }
