@@ -10,8 +10,8 @@ use std::thread;
 const WIDTH: i32 = 1200;
 const HEIGHT: i32 = 800;
 const Y_OFFSET: f32 = 3.0;
-const UPDATE_TICKS: usize = 9;
-const DIMENSIONS: u16 = 40;
+const UPDATE_TICKS: usize = 5;
+const DIMENSIONS: u16 = 50;
 const ALIVE_COLOR: Color = Color::new(0x7b, 0xa0, 0x56, 0xFF);
 
 #[derive(Debug, Clone, PartialEq)]
@@ -126,7 +126,7 @@ fn input_world(world: &mut World, rl: &mut RaylibHandle, _camera: &Camera3D) {
     world.update_ticks += 5;
   }
   if rl.is_key_pressed(KeyboardKey::KEY_DOWN) {
-    if world.update_ticks.checked_sub(5).is_some() {
+    if world.update_ticks.checked_sub(5+1).is_some() {
       world.update_ticks -= 5;
     } else {
       world.update_ticks = 1;
